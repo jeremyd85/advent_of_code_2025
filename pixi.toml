@@ -1,0 +1,10 @@
+[workspace]
+channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
+name = "advent_of_code_2025"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+modular = ">=26.1.0.dev2025113005,<27"
