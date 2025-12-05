@@ -22,11 +22,11 @@ struct Point(Copyable, Movable, Equatable):
             Point(row=self.row+1, col=self.col+1) # Bottom-Right
         ]
 
-fn is_in_bounds[o: Origin](grid: List[StringSlice[o]], point: Point) -> Bool:
+fn is_in_bounds(grid: List[String], point: Point) -> Bool:
     return point.row < len(grid) and point.col < len(grid[point.row]) and not point.has_negative_coordinate()
 
 
-fn display_marked_grid[o: Origin](grid: List[StringSlice[o]], points: List[Point], mark: StringSlice):
+fn display_marked_grid(grid: List[String], points: List[Point], mark: StringSlice):
     for row in range(len(grid)):
         for col in range(len(grid[row])):
             point = Point(row=row, col=col)
@@ -36,7 +36,7 @@ fn display_marked_grid[o: Origin](grid: List[StringSlice[o]], points: List[Point
                 print(grid[row][col], end="")
         print("")
 
-fn is_accessible[o: Origin](grid: List[StringSlice[o]], point: Point) -> Bool:
+fn is_accessible(grid: List[String], point: Point) -> Bool:
     paper_roll_count = 0
     for surrounding_point in point.surrounding_points():
         if is_in_bounds(grid, surrounding_point) and grid[surrounding_point.row][surrounding_point.col] == '@':
@@ -45,16 +45,15 @@ fn is_accessible[o: Origin](grid: List[StringSlice[o]], point: Point) -> Bool:
     return paper_roll_count < 4
 
 
-fn count_accessible_paper_rolls[o: Origin](grid: List[StringSlice[o]]) -> Int:
+fn get_accessible_paper_rolls(grid: List[String]) -> List[Point]:
     marked_points: List[Point] = []
-    count = 0
     for row in range(len(grid)):
         for col in range(len(grid[row])):
             if is_accessible(grid, Point(row=row, col=col)) and grid[row][col] == '@':
                 marked_points.append(Point(row=row, col=col))
-                count += 1
     # display_marked_grid(grid, marked_points, mark='x')
-    return count
+    return marked_points^
+
 
 fn main() raises:
     with open("day_04/input.txt", "r") as file:
@@ -62,8 +61,20 @@ fn main() raises:
     # print(data)
     # print("---------------")
     grid = data.splitlines()
-    accessible_paper_rolls = count_accessible_paper_rolls(grid^)
+    current_grid = [String(row) for row in grid]
+    
+    paper_rolls_removed = 0
+    accessible_paper_rolls = get_accessible_paper_rolls(current_grid)
+    while accessible_paper_rolls:
+        paper_rolls_removed += len(accessible_paper_rolls)
+        
+        for point in accessible_paper_rolls:
 
-    print(accessible_paper_rolls)
+            var row = current_grid[point.row]
+            row = row[:point.col] + '.' + row[point.col+1:]
+            current_grid[point.row] = row
 
-# 1540
+        accessible_paper_rolls = get_accessible_paper_rolls(current_grid)
+    print(paper_rolls_removed)
+
+# 8972
