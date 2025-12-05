@@ -5,3 +5,5 @@
 .idea
 kgen.*
 *.dSYM
+input.txt
+example.txt
