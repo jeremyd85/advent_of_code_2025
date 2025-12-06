@@ -1,15 +1,39 @@
-from collections import set
+struct SimplifiedRangeSet:
+    var _ranges: List[InclusiveRange]
+
+    def __init__(out self):
+        self._ranges = []
+    
+    def add_range(mut self, var new_range: InclusiveRange):
+        if len(self._ranges) == 0:
+            self._ranges.append(new_range)
+            return
+        midpoint = len(self._ranges) // 2
+        while True:
+            current_range = self._ranges[midpoint]
+            
+    
+
+
 
 @fieldwise_init
-struct InclusiveRange(Copyable, Movable, Equatable):
+struct InclusiveRange(Copyable, Movable, Equatable, Comparable, ImplicitlyCopyable):
     var start: Int
     var end: Int
+
+    fn __lt__(self, other: InclusiveRange) -> Bool:
+        return self.start < other.start or (self.start == other.start and self.end < other.end)
 
     fn __eq__(self, other: InclusiveRange) -> Bool:
         return self.start == other.start and self.end == other.end
     
     fn __contains__(self, value: Int) -> Bool:
         return value >= self.start and value <= self.end
+    
+    fn intersects(self, other: InclusiveRange) -> Bool:
+        return not (self.end < other.start or self.start > other.end)
+    
+
 
 
 fn parse_inventory(content: String) raises -> List[InclusiveRange]:
