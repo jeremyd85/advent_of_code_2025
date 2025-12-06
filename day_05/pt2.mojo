@@ -1,14 +1,8 @@
-from python import Python
-
 struct SimplifiedInclusiveRangeSet(Movable):
     var _ranges: List[InclusiveRange]
 
     fn __init__(out self):
         self._ranges = []
-    
-    fn __contains__(self, number: Int) -> Bool:
-        insertion_index = self._find_best_insertion_index(InclusiveRange(number, number))
-        return number in self._ranges[insertion_index]
 
     fn _find_best_insertion_index(self, range: InclusiveRange) -> Int:
         low = 0
@@ -17,8 +11,10 @@ struct SimplifiedInclusiveRangeSet(Movable):
         while low <= high:
             mid_index = low + (high-low) // 2
             current_range = self._ranges[mid_index]
+
             if current_range == range:
                 return mid_index
+
             if current_range.intersects(range):
                 lowest_intersecting_index = mid_index
                 high = mid_index - 1
@@ -56,7 +52,6 @@ struct SimplifiedInclusiveRangeSet(Movable):
         new_ranges.extend(self._ranges[end_merge_index::]) 
         
         self._ranges = new_ranges^
-
             
     
 struct InclusiveRange(Copyable, Movable, Equatable, Comparable, ImplicitlyCopyable):
@@ -106,17 +101,14 @@ fn parse_inventory(content: String) raises -> SimplifiedInclusiveRangeSet:
 
 
 fn main() raises:
-    with open("/home/jeremy/code/advent_of_code_2025/day_05/example.txt", "r") as file:
+    with open("day_05/input.txt", "r") as file:
         data = file.read()
-    py = Python.import_module("builtins")
 
     id_ranges = parse_inventory(data)
     
-    fresh_ingredients_count = py.int(0)
+    fresh_ingredients_count = 0
     for id_range in id_ranges.as_list():
-        print(id_range.start, id_range.end)
         fresh_in_range = (id_range.end+1) - id_range.start
-        print("fresh in range", fresh_in_range)
         fresh_ingredients_count += fresh_in_range
 
     print(fresh_ingredients_count)
